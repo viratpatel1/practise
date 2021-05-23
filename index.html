@@ -156,14 +156,31 @@
     })
         .then(function(response) {
                 // Handle the results here (response.result has the parsed body).
-                console.log("Response", response);
-              },
-              function(err) { console.error("Execute error", err); });
-  }
-  gapi.load("client:auth2", function() {
-    gapi.auth2.init({client_id: "966462799132-souv8f1mqpaj3r6mdc1fj3au15lbqfnf.apps.googleusercontent.com"});
-  });
-</script>
+//         function listLabels() {
+//         gapi.client.gmail.users.labels.list({
+//           'userId': 'me'
+//         })
+      .then(function (response) {
+            // Handle the results here (response.result has the parsed body).
+                var labels = response.result.labels;
+                appendPre('Labels:');
+      
+                if (labels && labels.length > 0) {
+                  for (i = 0; i < labels.length; i++) {
+                    var label = labels[i];
+                    appendPre(label.name)
+                  }
+                } else {
+                  appendPre('No Labels found.');
+                }
+            console.log("Response", response);
+          },
+            function (err) { console.error("Execute error", err); });
+      }
+      gapi.load("client:auth2", function () {
+        gapi.auth2.init({ client_id: "966462799132-souv8f1mqpaj3r6mdc1fj3au15lbqfnf.apps.googleusercontent.com" });
+      });
+    </script>
 
 
     <script async defer src="https://apis.google.com/js/api.js"
