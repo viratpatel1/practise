@@ -1,12 +1,11 @@
-
-
-
 <!DOCTYPE html>
 <html>
+
   <head>
     <title>Gmail API Quickstart</title>
     <meta charset="utf-8" />
   </head>
+
   <body>
     <p>Gmail API Quickstart</p>
     <!--Add buttons to initiate auth sequence and sign out-->
@@ -14,9 +13,67 @@
     <button id="signout_button" style="display: none;">Sign Out</button>
     <button onclick="authenticate().then(loadClient)">authorize and load</button>
     <button onclick="execute()">execute</button>
+    <div class="login" onclick="login()">
+        <form action="">
+          <input type="text">
+        </form>
+    </div>
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+      /**
+       * Sample JavaScript code for gmail.users.labels.list
+       * See instructions for running APIs Explorer code samples locally:
+       * https://developers.google.com/explorer-help/guides/code_samples#javascript
+       */
+
+      function authenticate() {
+        return gapi.auth2.getAuthInstance()
+          .signIn({ scope: "https://mail.google.com/ https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.readonly" })
+          .then(function login() { 
+            /*console.log("Sign-in successful"); */
+          },
+          function (err) { 
+              console.error("Error signing in", err); 
+            });
+      }
+      function loadClient() {
+        gapi.client.setApiKey("AIzaSyCMIsoIRc9EJdCioNxxE9trped6FWKukP8");
+        return gapi.client.load("https://gmail.googleapis.com/$discovery/rest?version=v1")
+          .then(function () { console.log("GAPI client loaded for API"); },
+            function (err) { console.error("Error loading GAPI client for API", err); });
+      }
+      // Make sure the client is loaded and sign-in is complete before calling this method.
+      function execute() {
+        return gapi.client.gmail.users.labels.list({
+          "userId": "me"
+        })
+          .then(function (response) {
+            // Handle the results here (response.result has the parsed body).
+                var labels = response.result.labels;
+                appendPre('Labels:');
+      
+                if (labels && labels.length > 0) {
+                  for (i = 0; i < labels.length; i++) {
+                    var label = labels[i];
+                    appendPre(label.name)
+                  }
+                } else {
+                  appendPre('No Labels found.');
+                }
+            console.log("Response", response);
+          },
+            function (err) { console.error("Execute error", err); });
+      }
+      gapi.load("client:auth2", function () {
+        gapi.auth2.init({ client_id: "966462799132-souv8f1mqpaj3r6mdc1fj3au15lbqfnf.apps.googleusercontent.com" });
+      });
+    </script>
+
+  
     <script type="text/javascript">
       // Client ID and API key from the Developer Console
       var CLIENT_ID = '966462799132-souv8f1mqpaj3r6mdc1fj3au15lbqfnf.apps.googleusercontent.com';
@@ -58,7 +115,7 @@
           updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
           authorizeButton.onclick = handleAuthClick;
           signoutButton.onclick = handleSignoutClick;
-        }, function(error) {
+        }, function (error) {
           appendPre(JSON.stringify(error, null, 2));
         });
       }
@@ -108,12 +165,17 @@
        * Print all Labels in the authorized user's inbox. If no labels
        * are found an appropriate message is printed.
        */
+
+      /* gapi.load('auth2', function() {
+       var labels = response.result.message
+     });*/
+
       function listLabels() {
         gapi.client.gmail.users.labels.list({
           'userId': 'me'
-        }).then(function(response) {
+        }).then(function (response) {
           var labels = response.result.labels;
-          appendPre('messages:');
+          appendPre('Labels:');
 
           if (labels && labels.length > 0) {
             for (i = 0; i < labels.length; i++) {
@@ -127,64 +189,12 @@
       }
 
     </script>
-    
-    
-<script src="https://apis.google.com/js/api.js"></script>
-<script>
-  /**
-   * Sample JavaScript code for gmail.users.labels.list
-   * See instructions for running APIs Explorer code samples locally:
-   * https://developers.google.com/explorer-help/guides/code_samples#javascript
-   */
-
-  function authenticate() {
-    return gapi.auth2.getAuthInstance()
-        .signIn({scope: "https://mail.google.com/ https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.readonly"})
-        .then(function() { console.log("Sign-in successful"); },
-              function(err) { console.error("Error signing in", err); });
-  }
-  function loadClient() {
-    gapi.client.setApiKey("AIzaSyCMIsoIRc9EJdCioNxxE9trped6FWKukP8");
-    return gapi.client.load("https://gmail.googleapis.com/$discovery/rest?version=v1")
-        .then(function() { console.log("GAPI client loaded for API"); },
-              function(err) { console.error("Error loading GAPI client for API", err); });
-  }
-  // Make sure the client is loaded and sign-in is complete before calling this method.
-  function execute() {
-    return gapi.client.gmail.users.labels.list({
-      "userId": "me"
-    })
-      .then(function (response) {
-            // Handle the results here (response.result has the parsed body).
-                var labels = response.result.labels;
-                appendPre('Labels:');
-      
-                if (labels && labels.length > 0) {
-                  for (i = 0; i < labels.length; i++) {
-                    var label = labels[i];
-                    appendPre(label.name)
-                  }
-                } else {
-                  appendPre('No Labels found.');
-                }
-            console.log("Response", response);
-          },
-            function (err) { console.error("Execute error", err); });
-      }
-      gapi.load("client:auth2", function () {
-        gapi.auth2.init({ client_id: "966462799132-souv8f1mqpaj3r6mdc1fj3au15lbqfnf.apps.googleusercontent.com" });
-      });
-    </script>
 
 
-    <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
-      onreadystatechange="if (this.readyState === 'complete') this.onload()">
-    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">      
+      </script>
   </body>
+
 </html>
-
-
-
-
-<!-- AIzaSyCMIsoIRc9EJdCioNxxE9trped6FWKukP8 -->
