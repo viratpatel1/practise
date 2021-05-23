@@ -154,12 +154,6 @@
     return gapi.client.gmail.users.labels.list({
       "userId": "me"
     })
-        .then(function(response) {
-                // Handle the results here (response.result has the parsed body).
-//         function listLabels() {
-//         gapi.client.gmail.users.labels.list({
-//           'userId': 'me'
-//         })
       .then(function (response) {
             // Handle the results here (response.result has the parsed body).
                 var labels = response.result.labels;
